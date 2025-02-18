@@ -10,7 +10,7 @@ build:
 	docker rmi ${IMAGE_NAME}:${IMAGE_TAG} || true && docker build -t $(IMAGE_NAME) . --no-cache
 
 run:
-	docker run -d --name $(CONTAINER_NAME) $(IMAGE_NAME)
+	docker run -d --name $(CONTAINER_NAME) -p 8000:8000 $(IMAGE_NAME)
 	docker logs $(CONTAINER_NAME)
 
 stop:
