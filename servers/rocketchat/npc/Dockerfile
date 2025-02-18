@@ -1,5 +1,8 @@
 FROM ghcr.io/theagentcompany/task-base-image:1.0.0
 
+RUN pip install fastapi uvicorn sotopia==0.1.4
+
+COPY main.py /workspace
 COPY populate_data.py /workspace
 COPY evaluator.py /utils
 COPY *.json /workspace
@@ -9,4 +12,6 @@ COPY *.json /workspace
 ENV REDIS_OM_URL redis://default:theagentcompany@redis-stack:6379
 # RocketChat NPC name, password, RocketChat service URL
 # keep the container running (optional)
-CMD python populate_data.py
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
