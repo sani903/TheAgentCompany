@@ -3,10 +3,8 @@
 # Also there still need to hack the redis entrypoint file to make redis can launch while building
 FROM redis/redis-stack-server:7.4.0-v0
 
-# Install Python requests library
 RUN apt-get update && apt-get install -y pip
-RUN pip install sotopia==0.1.4
-# Install to fix the problem
+RUN pip install sotopia==0.1.4 fastapi uvicorn
 RUN pip install hiredis==3.0.0
 
 RUN mkdir -p /workspace
@@ -18,6 +16,6 @@ COPY *.json /workspace
 # ENV REDIS_OM_URL redis://default:theagentcompany@localhost/:6379
 ENV REDIS_OM_URL redis://localhost:6379
 
-# RocketChat NPC name, password, RocketChat service URL
-# keep the container running (optional)
-RUN python3 /workspace/populate_data.py
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
