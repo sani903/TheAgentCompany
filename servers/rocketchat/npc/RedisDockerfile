@@ -5,7 +5,7 @@ FROM redis/redis-stack-server:7.4.0-v0
 
 # Install Python requests library
 RUN apt-get update && apt-get install -y pip
-RUN pip install sotopia==0.1.2
+RUN pip install sotopia==0.1.4
 # Install to fix the problem
 RUN pip install hiredis==3.0.0
 
