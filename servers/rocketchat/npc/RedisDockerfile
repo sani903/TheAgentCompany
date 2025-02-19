@@ -4,8 +4,7 @@
 FROM redis/redis-stack-server:7.4.0-v0
 
 RUN apt-get update && apt-get install -y pip
-RUN pip install sotopia==0.1.4 fastapi uvicorn
-RUN pip install hiredis==3.0.0
+RUN pip install fastapi uvicorn sotopia==0.1.4 httpx hiredis==3.0.0
 
 RUN mkdir -p /workspace
 COPY *.py /workspace
