@@ -1,7 +1,7 @@
 import httpx
 from typing import Any, Dict, List
 
-# The base URL for the Sotopia FastAPI service
+# The base URL for the Sotopia FastAPI service.
 SOTOPIA_BASE_URL = "http://sotopia-server:8800"
 
 # ---------------------
@@ -23,7 +23,7 @@ async def create_scenario(scenario_data: Dict[str, Any]) -> str:
     async with httpx.AsyncClient() as client:
         response = await client.post(f"{SOTOPIA_BASE_URL}/scenarios", json=scenario_data)
         response.raise_for_status()
-        return response.json()  # Expected to return the new scenario's pk
+        return response.json()  # Expected to return the new scenario's primary key
 
 async def delete_scenario(scenario_id: str) -> str:
     async with httpx.AsyncClient() as client:
@@ -50,11 +50,19 @@ async def create_agent(agent_data: Dict[str, Any]) -> str:
     async with httpx.AsyncClient() as client:
         response = await client.post(f"{SOTOPIA_BASE_URL}/agents", json=agent_data)
         response.raise_for_status()
-        return response.json()  # Expected to return the new agent's pk
+        return response.json()  # Expected to return the new agent's primary key
 
 async def delete_agent(agent_id: str) -> str:
     async with httpx.AsyncClient() as client:
         response = await client.delete(f"{SOTOPIA_BASE_URL}/agents/{agent_id}")
+        response.raise_for_status()
+        return response.json()
+
+# NEW: Get a single agent by its ID.
+async def get_agent_by_id(agent_id: str) -> Dict[str, Any]:
+    async with httpx.AsyncClient() as client:
+        # Adjust the endpoint path as necessary. Here we assume an endpoint like /agents/id/{agent_id}
+        response = await client.get(f"{SOTOPIA_BASE_URL}/agents/id/{agent_id}")
         response.raise_for_status()
         return response.json()
 
@@ -120,13 +128,17 @@ async def get_evaluation_dimensions() -> Dict[str, List[Any]]:
 
 async def create_evaluation_dimensions(evaluation_data: Dict[str, Any]) -> str:
     async with httpx.AsyncClient() as client:
-        response = await client.post(f"{SOTOPIA_BASE_URL}/evaluation_dimensions", json=evaluation_data)
+        response = await client.post(
+            f"{SOTOPIA_BASE_URL}/evaluation_dimensions", json=evaluation_data
+        )
         response.raise_for_status()
         return response.json()
 
 async def delete_evaluation_dimension_list(list_name: str) -> str:
     async with httpx.AsyncClient() as client:
-        response = await client.delete(f"{SOTOPIA_BASE_URL}/evaluation_dimensions/{list_name}")
+        response = await client.delete(
+            f"{SOTOPIA_BASE_URL}/evaluation_dimensions/{list_name}"
+        )
         response.raise_for_status()
         return response.json()
 
@@ -137,6 +149,5 @@ async def simulate(simulation_data: Dict[str, Any]) -> str:
     async with httpx.AsyncClient() as client:
         response = await client.post(f"{SOTOPIA_BASE_URL}/simulate", json=simulation_data)
         response.raise_for_status()
-        # Assuming the simulation endpoint returns a simulation episode ID or OK message.
+        # Assuming the simulation endpoint returns a simulation episode ID or an OK message.
         return response.text
-
