@@ -2,22 +2,21 @@ import asyncio
 import logging
 from uuid import uuid4
 import json
+from datetime import datetime
+import os
 
 import aiohttp
 import pydantic
 import requests
 
 from sotopia.agents import BaseAgent
-from sotopia.database import AgentProfile, MessageTransaction
 from sotopia.messages import AgentAction, Observation
 
 from pydantic import Field
-from datetime import datetime
-
-from typing import Any
-from datetime import datetime
-import os
 from rocketchat_bot import RocketChatBot
+
+# (Optional) Import remote helper functions if needed
+from sotopia_client import get_agent_by_id  # Example function to fetch agent info remotely
 
 server_url = os.getenv('BOT_URL') or 'http://localhost:3000'
 credential_file_path = os.getenv('CREDENTIAL_FILE_PATH') or 'npc_credential.json'
@@ -34,11 +33,9 @@ def get_credentials(user_key):
         password = user_info.get('password')
         return username, password
     else:
-        raise RuntimeError(f"Didn't find the NPC credential:{user_key} in file")
-        return None, None  # Return None if the key doesn't exist
+        raise RuntimeError(f"Didn't find the NPC credential: {user_key} in file")
 
-
-def parse_obj(obj: dict[str, Any]) -> "RocketChatMessageTransaction":
+def parse_obj(obj: dict[str, any]) -> "RocketChatMessageTransaction":
     if obj:
         return RocketChatMessageTransaction(
             timestamp_str=obj["timestamp"],
@@ -53,8 +50,12 @@ def parse_obj(obj: dict[str, Any]) -> "RocketChatMessageTransaction":
             message="",
         )
 
+class RocketChatMessageTransaction:
+    def __init__(self, timestamp_str: str, sender: str, message: str):
+        self.timestamp_str = timestamp_str
+        self.sender = sender
+        self.message = message
 
-class RocketChatMessageTransaction(MessageTransaction):
     def to_tuple(self) -> tuple[float, str, str]:
         timestamp = datetime.fromisoformat(self.timestamp_str)
         return (
@@ -63,16 +64,15 @@ class RocketChatMessageTransaction(MessageTransaction):
             self.message,
         )
 
-
 class RocketChatAgent(BaseAgent[Observation, AgentAction]):
-    """An agent use rocket chat as a message broker."""
-
+    """An agent that uses RocketChat as a message broker."""
     def __init__(
         self,
         agent_name: str | None = None,
         uuid_str: str | None = None,
         session_id: str | None = None,
-        agent_profile: AgentProfile | None = None,
+        # Instead of using a direct AgentProfile instance, we now accept a dict representing the profile.
+        agent_profile: dict | None = None,
         credential_name: str | None = None,
     ) -> None:
         super().__init__(
@@ -80,7 +80,6 @@ class RocketChatAgent(BaseAgent[Observation, AgentAction]):
             uuid_str=uuid_str,
             agent_profile=agent_profile,
         )
-        # super().__init__(agent_name=agent_name, uuid_str=uuid_str)
         self.session_id = session_id or str(uuid4())
         self.sender_id = str(uuid4())
         print(f"step 1: connect to the server: user first name: {credential_name}")
@@ -94,7 +93,7 @@ class RocketChatAgent(BaseAgent[Observation, AgentAction]):
         self,
         obs: Observation,
     ) -> AgentAction:
-        raise NotImplementedError
+        raise NotImplementedError("Synchronous 'act' not implemented. Use asynchronous 'aact'.")
 
     async def aact(
         self,
@@ -113,34 +112,28 @@ class RocketChatAgent(BaseAgent[Observation, AgentAction]):
         login_info = self.bot.api.me().json()
         if 'error' in login_info:
             raise RuntimeError(f"Login failed: {login_info['error']}")
-        
         print(f"Login successful! User info: {login_info}")
         print("RocketChat Agent Listening")
         return
 
-    async def send_message(self,obs: Observation):
-        # 1. post observation to the message list
-        print("step 2: post observation to the message list:",obs.last_turn)
+    async def send_message(self, obs: Observation):
+        print("step 2: post observation to the message list:", obs.last_turn)
         last_timestamp = datetime.now()
         if obs.last_turn:
-            # get rid of x said
             output_msg = obs.last_turn.split(": ", 1)[1].replace('"', '')
             if "Here is the context" not in obs.last_turn:
                 self.bot.send_message(output_msg)
             else:
                 print(output_msg)
         else:
-            print("Sotopia NPC decide to reply Empty String. Chenge to not send.")
+            print("Sotopia NPC decided to reply with an empty string. Changing behavior to not send.")
         return last_timestamp
     
-    async def get_action_from_message(self,last_timestamp):
-        # Get meesage from client
-        # if not success:
-        #     self.reset("Someone has left or the conversation is too long.")
-        #     return AgentAction(action_type="leave", argument="")
-        return self.constrct_speak_action(self.bot.run())
+    async def get_action_from_message(self, last_timestamp):
+        # Get message from client
+        return self.construct_speak_action(self.bot.run())
 
-    def constrct_speak_action(self,message):
+    def construct_speak_action(self, message):
         action_string = message
         action_data = {
             "action_type": "speak",
@@ -151,10 +144,8 @@ class RocketChatAgent(BaseAgent[Observation, AgentAction]):
             action = AgentAction.parse_raw(action_string_formatted)
             return action
         except pydantic.error_wrappers.ValidationError:
-            logging.warn(
-                "Failed to parse action string {}. Fall back to speak".format(
-                    action_string
-                )
+            logging.warning(
+                "Failed to parse action string {}. Falling back to speak.".format(action_string)
             )
             return AgentAction(
                 action_type="speak", argument=message
@@ -169,4 +160,4 @@ class RocketChatAgent(BaseAgent[Observation, AgentAction]):
             if reset_reason != "":
                 self.bot.send_message(reset_reason)
         except Exception as e:
-            logging.error(f"Failed to reset RedisAgent {self.sender_id}: {e}")
+            logging.error(f"Failed to reset RocketChatAgent {self.sender_id}: {e}")
