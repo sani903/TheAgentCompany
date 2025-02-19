@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from sotopia.database import AgentProfile
+from sotopia.database.persistent_profile import AgentProfile
 from pydantic import BaseModel
 from typing import List
 
