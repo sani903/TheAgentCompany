@@ -1,9 +1,10 @@
 FROM ghcr.io/theagentcompany/task-base-image:1.0.0
 
-RUN pip install fastapi uvicorn sotopia==0.1.4 httpx rq
+RUN pip install fastapi uvicorn sotopia==0.1.4 httpx
 
 COPY main.py /workspace
 COPY evaluator.py /utils
+COPY sotopia_client.py /workspace/
 COPY npc_definition.json /workspace
 
 # Redis Username: default, Password: theagentcompany
@@ -14,3 +15,5 @@ ENV REDIS_OM_URL redis://default:theagentcompany@redis-stack:6379
 EXPOSE 8000
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+
