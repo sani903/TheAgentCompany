@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from sotopia.database.persistent_profile import AgentProfile
 from pydantic import BaseModel
 from typing import List
