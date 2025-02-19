@@ -1,10 +1,10 @@
 FROM ghcr.io/theagentcompany/task-base-image:1.0.0
 
-RUN pip install fastapi uvicorn sotopia==0.1.4
+RUN pip install fastapi uvicorn sotopia==0.1.4 httpx
 
 COPY main.py /workspace
 COPY evaluator.py /utils
-COPY *.json /workspace
+COPY npc_definition.json /workspace
 
 # Redis Username: default, Password: theagentcompany
 # Redis service URL: URL/:6379
