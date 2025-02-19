@@ -9,7 +9,7 @@ import redis
 Reference: https://github.com/sotopia-lab/sotopia/blob/main/examples/fast_api_example.py
 https://github.com/sotopia-lab/sotopia/blob/main/sotopia/api/fastapi_server.py
 """
-
+# TODO: where does rocketchat processing exactly take place? Is it through base docker image?
 
 BASE_URL = "http://localhost:8080"
 
