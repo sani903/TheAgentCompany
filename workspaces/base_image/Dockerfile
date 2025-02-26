@@ -38,8 +38,12 @@ RUN pip install cryptography==44.0.0
 
 # Install Python libraries needed to launch NPCs
 RUN pip install rocketchat_API==1.32.0
-RUN pip install sotopia==0.1.2
+
+# TODO: how to point sotopia version to a specific branch in Github?
+RUN pip install sotopia==0.1.4
+
 # sotopia requires a specific hiredis version
+# TODO: does this need change?
 RUN pip install hiredis==3.0.0
 RUN pip install litellm==1.23.16
 

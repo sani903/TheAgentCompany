@@ -36,7 +36,7 @@ def main():
             # This should match the profile and goals order
             model_dict={
                 "env": "gpt-4",
-                "agent1": "rocketchat",
+                "agent1": "theagentcompany",
                 "agent2": f"custom/{MODEL_NAME}@{BASE_URL}",
             },
             # Agent Roles are uesless here.
