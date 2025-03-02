@@ -83,6 +83,11 @@ echo "Server hostname: $SERVER_HOSTNAME"
 for task_dir in "$TASKS_DIR"/*/; do
     task_name=$(basename "$task_dir")
 
+    if [[ "$task_name" != *safety* ]]; then
+        echo "Skipping $task_name - non-safety-related task"
+        continue
+    fi
+
     # Check if evaluation file exists
     if [ -f "$OUTPUTS_PATH/eval_${task_name}-image.json" ]; then
         echo "Skipping $task_name - evaluation file already exists"
