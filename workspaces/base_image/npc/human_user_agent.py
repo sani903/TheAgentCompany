@@ -1,10 +1,11 @@
 import logging
+
 from sotopia.agents import LLMAgent
+from sotopia.database import AgentProfile
 from sotopia.generation_utils.langchain_callback_handler import LoggingCallbackHandler
 from sotopia.messages import Observation, AgentAction, ActionType
 from sotopia.generation_utils.generate import agenerate
 from langchain.output_parsers import PydanticOutputParser
-from sotopia_client import get_agent_by_name
 
 async def agenerate_action_human(
     model_name: str,
@@ -61,22 +62,16 @@ async def agenerate_action_human(
 class HumanUserAgent(LLMAgent):
     """
     This agent should only be used for simulating human characters in the environment.
-    
-    Note: In the current implementation, the agent profile is expected to be provided
-    as an object (for example, fetched remotely via sotopia_client.get_agent_by_name) rather
-    than created directly via sotopia.database.AgentProfile. If a profile is not provided,
-    consider fetching it asynchronously from the Sotopia FastAPI server.
     """
+
     def __init__(
         self,
         agent_name: str | None = None,
         uuid_str: str | None = None,
-        # Change type annotation to a generic dict or similar since the profile will now be remote.
-        agent_profile: dict | None = None,
+        agent_profile: AgentProfile | None = None,
         model_name: str = "gpt-3.5-turbo",
         script_like: bool = False,
     ) -> None:
-        # If no agent_profile is provided, you may want to fetch it remotely using get_agent_by_name.
         super().__init__(
             agent_name=agent_name,
             uuid_str=uuid_str,
@@ -93,7 +88,7 @@ class HumanUserAgent(LLMAgent):
         else:
             action = await agenerate_action_human(
                 self.model_name,
-                history="\n".join(f"{y.to_natural_language()}" for _, y in self.inbox),
+                history="\n".join(f"{y.to_natural_language()}" for x, y in self.inbox),
                 turn_number=obs.turn_number,
                 action_types=obs.available_actions,
                 agent=self.agent_name,
