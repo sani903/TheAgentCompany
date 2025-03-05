@@ -34,16 +34,8 @@ def main():
             # The agent1 is the examinee
             # The agent2 is the sotopia NPC
             # This should match the profile and goals order
-            model_dict={
-                "env": "gpt-4",
-                "agent1": "theagentcompany",
-                "agent2": f"custom/{MODEL_NAME}@{BASE_URL}",
-            },
-            # Agent Roles are uesless here.
-            agents_roles={
-                "agent1": "",
-                "agent2": "",
-            },
+            evaluator_model= "gpt-4",
+            agent_models=[MODEL_NAME, MODEL_NAME],
             agent_name = args.agent_name
         )
     )

@@ -1,37 +1,40 @@
+import aiohttp
+import asyncio
 import json
+import requests
+from sotopia.messages import Message
+from sotopia.api.websocket_utils import WSMessageType
+from rocketchat_agent import RocketChatBot
 import os
 
-from rocketchat_agent import RocketChatAgent
-from typing import Literal, Type, cast, Any, Generator, TypeVar
+FAST_API_SERVER = "http://localhost:8080"
 
-from beartype import beartype
-from tqdm.asyncio import tqdm_asyncio
+def get_credentials(credential_file_path, user_key):
+    # Attempt to get the user's credentials based on the provided key
+    with open(credential_file_path, 'r') as file:
+        json_data = json.load(file)
+    
+    user_info = json_data.get(user_key)
+    
+    if user_info:
+        username = user_info.get('username')
+        password = user_info.get('password')
+        return username, password
+    else:
+        raise RuntimeError(f"Didn't find the NPC credential:{user_key} in file")
 
-from human_user_agent import HumanUserAgent
-from sotopia.agents.base_agent import BaseAgent
-from sotopia.envs.evaluators import (
-    ReachGoalLLMEvaluator,
-    RuleBasedTerminatedEvaluator,
-)
-from sotopia.generation_utils.generate import LLM_Name
-from sotopia.messages import AgentAction, Message, Observation
-from sotopia.database import AgentProfile, EnvironmentProfile
-from sotopia.samplers import BaseSampler, EnvAgentCombo
-from sotopia.server import arun_one_episode
-from sotopia.envs.parallel import ParallelSotopiaEnv
-from sotopia.envs.evaluators import EvaluationForTwoAgents
+def get_agent_profile(current_agent_list, first_name):
+	for agent in current_agent_list:
+		if agent['first_name'] == first_name:
+			return agent
+	assert False, f"{first_name} agent is not present in Sotopia database"
 
-ObsType = TypeVar("ObsType")
-ActType = TypeVar("ActType")
-
-scenarios_file_path = os.getenv('SCENARIOS_FILE_PATH') or 'scenarios.json'
-
-def get_scenarios(npc_first_name):
+def get_scenarios(scenarios_file_path, npc_name):
     # Attempt to get the user's scenarios based on the provided key
     with open(scenarios_file_path, 'r') as file:
         json_data = json.load(file)
 
-    agent_scenario = json_data.get(npc_first_name)
+    agent_scenario = json_data.get(npc_name)
     if not agent_scenario:
         raise RuntimeError("Didn't find the NPC scenarios in file")
 
@@ -48,7 +51,7 @@ def get_scenarios(npc_first_name):
     # counter-parties, even though sotopia doesn't really control examinee.
     examinee_goal = "You need to seek help from another agent to complete your work."
     return  {
-        "codename": "working_space_1" + npc_first_name,
+        "codename": "working_space_1" + npc_name,
         "scenario": "People are working in a startup communicating through rocketchat. There is an AI agent working with them.",
         "agent_goals": [
             examinee_goal,
@@ -56,140 +59,82 @@ def get_scenarios(npc_first_name):
         ]
     }
 
-
-class BridgeSampler(BaseSampler[ObsType, ActType]):
-    def sample(
-        self,
-        agent_classes: Type[BaseAgent[ObsType, ActType]]
-        | list[Type[BaseAgent[ObsType, ActType]]],
-        n_agent: int = 3,
-        replacement: bool = True,
-        size: int = 1,
-        env_params: dict[str, Any] = {},
-        agents_params: list[dict[str, Any]] = [{}, {}],
-        agent_name: str = "",
-    ) -> Generator[EnvAgentCombo[ObsType, ActType], None, None]:
-        # This is a simplified version of the original function
-        # The original function is not provided in the snippet
-        assert (
-            not isinstance(agent_classes, list) or len(agent_classes) == n_agent
-        ), f"agent_classes should be a list of length {n_agent} or a single agent class"
-
-        if not isinstance(agent_classes, list):
-            agent_classes = [agent_classes] * n_agent
-        assert (
-            len(agents_params) == n_agent
-        ), f"agents_params should be a list of length {n_agent}"
-        env_profile = EnvironmentProfile.parse_obj(
-            get_scenarios(agent_name)
-        )
-        env = ParallelSotopiaEnv(env_profile=env_profile, **env_params)
-        name = agent_name.split()
-        agent_profiles = [
-            # Only get the first result. If not item in list, should raise error
-            # Please check the redis server, you should populate data before running
-            AgentProfile.find(AgentProfile.first_name == 'theagentcompany').all()[0],
-            AgentProfile.find(
-                (AgentProfile.first_name == name[0]) &
-                (AgentProfile.last_name == name[1])
-            ).all()[0],
-        ]
-        for _ in range(size):
-            agents = [
-                agent_class(agent_profile=agent_profile, **agent_params)
-                for agent_class, agent_profile, agent_params in zip(
-                    agent_classes, agent_profiles, agents_params
-                )
-            ]
-            for agent, goal in zip(agents, env.profile.agent_goals):
-                agent.goal = goal
-            yield env, agents
-
-
-@beartype
 async def run_server(
-    model_dict: dict[str, LLM_Name],
-    agents_roles: dict[str, str],
-    sampler: BaseSampler[Observation, AgentAction] = BridgeSampler(),
-    action_order: Literal["simutaneous", "round-robin", "random"] = "round-robin",
-    env_agent_combo_list: list[EnvAgentCombo[Observation, AgentAction]] = [],
-    tag: str | None = None,
-    push_to_db: bool = False,
-    using_async: bool = True,
+    evaluator_model: str,
+	agent_models: list[str],
     agent_name: str = "",
 ) -> list[list[tuple[str, str, Message]]]:
-    """
-    Doc incomplete
+	
+	# get the agent profiles
+	current_agent_list = requests.get(f"{FAST_API_SERVER}/agents/").json()
+	npc_agent = get_agent_profile(current_agent_list, agent_name.split()[0]) # NPC agent
+	rocketchat_agent = get_agent_profile(current_agent_list, 'theagentcompany') #rocketchat agent
 
-    Args:
-        omniscient (bool): Whether the agent knows the goal of the other, default to False
-        script_like (bool): Whether we generate the turn in script like manner, default to False
-        json_in_script (bool): Whether we requires the script generator to return json (Only valid when script_like is True), default to False
-
-    Note: env_agent_combo_list is optional. When it defaults to [], sampler is used
-    else the sampler is not used. Please pass in BaseSampler or simply not specify it when using this option.
-    """
-
-    assert not (push_to_db and tag is None), "please provide a tag when push to db"
-
-    # Create Environment and agents
-    # This step will be moved to outside this function
-
-    env_params = {
-        "model_name": model_dict["env"],
-        "action_order": action_order,
-        "evaluators": [
-            RuleBasedTerminatedEvaluator(max_turn_number=20, max_stale_turn=4),
-        ],
-        "terminal_evaluators": [
-            ReachGoalLLMEvaluator(model_dict["env"], response_format_class=EvaluationForTwoAgents),
-        ],
-
-    }
-    agents_model_dict = {
-        "agent1": model_dict["agent1"],
-        "agent2": model_dict["agent2"],
-    }
-
-    if env_agent_combo_list:
-        assert (
-            type(sampler) is BaseSampler
-        ), "No sampler should be used when `env_agent_combo_list` is not empty"
-        env_agent_combo_iter = iter(env_agent_combo_list)
-    else:
-        agent_classes = []
-        agents_params = []
-        
-        for model_name, agent_role in zip(agents_model_dict.values(), agents_roles.values()):
-            if model_name == "rocketchat":
-                agent_classes.append(RocketChatAgent)
-                agents_params.append({"credential_name": agent_name})
-            else:
-                agent_classes.append(HumanUserAgent)
-                agents_params.append({"model_name": model_name})
-        
-        env_agent_combo_iter = sampler.sample(
-            agent_classes=agent_classes,
-            n_agent=len(agents_model_dict),
-            env_params=env_params,
-            agents_params=agents_params,
-            agent_name=agent_name,
+	# push the scenario using FastAPI
+	scenarios_file_path = os.getenv('SCENARIOS_FILE_PATH') or 'scenarios.json'
+	scenario = get_scenarios(scenarios_file_path, agent_name)
+	response = requests.post(
+            f"{FAST_API_SERVER}/scenarios/",
+            headers={"Content-Type": "application/json"},
+            json=scenario,
         )
+	if response.status_code != 200:
+		raise RuntimeError('Failed to post scenario using FastAPI')
 
-    episode_futures = [
-        arun_one_episode(
-            env=env_agent_combo[0],
-            agent_list=env_agent_combo[1] ,
-            tag=tag,
-            push_to_db=push_to_db,
-        )
-        for env_agent_combo in env_agent_combo_iter
-    ]
+	# initialize the rocketchat bot
+	server_url = os.getenv('BOT_URL') or 'http://localhost:3000' # URL to the RocketChat service
+	credential_file_path = os.getenv('CREDENTIAL_FILE_PATH') or 'npc_credential.json' #file containing rocket chat credentials
+	username, password = get_credentials(credential_file_path, agent_name)
+	rocketchat_bot = RocketChatBot(username, password, server_url)
 
-    batch_results = (
-        await tqdm_asyncio.gather(*episode_futures, desc="Running one batch")
-        if using_async
-        else [await i for i in episode_futures]
-    )
+	# send init message
+	login_info = rocketchat_bot.api.me().json()
+	if 'error' in login_info:
+		raise RuntimeError(f"Login failed: {login_info['error']}")
+	print(f"Login successful! User info: {login_info}")
+	print("RocketChat Agent Listening")
+	
+	# get scenario from codename, and create start message
+	scenario = requests.get( f"{FAST_API_SERVER}/scenarios/codename/working_space_1" + agent_name).json()[0]
+	env_id = scenario['pk']
 
-    return cast(list[list[tuple[str, str, Message]]], batch_results)
+	start_msg = {
+		"type": "START_SIM",
+		"data": {
+			"env_id": env_id,
+			"agent_ids": [npc_agent['pk'], rocketchat_agent['pk']],
+			"agent_models": agent_models,
+			"evaluator_model": evaluator_model,
+			"evaluation_dimension_list_name": "# TODO",
+			"mode": "turn"
+		},
+    }
+	async with aiohttp.ClientSession() as session:
+		async with session.ws_connect(f'ws://localhost:8080/ws/simulation?token={env_id}') as ws:
+			await ws.send_json(start_msg)
+			while True:
+				# get message from RocketChat UI
+				message = rocketchat_bot.run()
+
+				# Send message to NPC via WebSocket
+				send_message = {
+           			"type": WSMessageType.TURN_REQUEST.value,
+            		"data": {"agent_id": agent_name, "content": message},
+        		}
+				await ws.send_json(send_message)
+
+				# receive response from NPC
+				msg = await ws.receive_json()
+
+				msg_type = msg.get('type')
+				if msg_type == WSMessageType.FINISH_SIM.value or msg_type == WSMessageType.END_SIM.value:
+					break
+				elif msg_type == WSMessageType.TURN_RESPONSE.value:
+					# extract content of message and send to RocketChat UI
+					msg_content = msg['data'].get('turn_response', "")
+					rocketchat_bot.send_message(msg_content)
+				else:
+					pass
+	return
+
+
