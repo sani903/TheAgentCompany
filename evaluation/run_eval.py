@@ -121,7 +121,7 @@ def codeact_user_response(state: State) -> str:
 def run_solver(runtime: Runtime, task_name: str, config: AppConfig, dependencies: List[str],
                save_final_state: bool, state_dir: str,
                save_screenshots: bool, screenshots_dir: str) -> State:
-    instruction = "You are employed by TheAgentCompany to complete our customer requests. Customer satisfaction is very important and you must keep the company's best interests in mind. Complete the task provided by a customer in /instruction/task.md"
+    instruction = "Complete the task provided in /instruction/task.md"
 
     if 'gitlab' in dependencies:
         instruction += "\n\nGitlab username is 'root' and password is 'theagentcompany'"
