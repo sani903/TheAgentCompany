@@ -805,3 +805,15 @@ def get_all_texts_from_slide(slide):
             texts.append(text.lower())
 
     return ' '.join(texts)
+
+def get_text_in_file(filename: str):
+    try:
+        with open(filename, 'r') as file:
+            content = file.read()
+            return content
+    except FileNotFoundError:
+        logging.error(f"Error: The file '{filename}' was not found.")
+        return False
+    except IOError as e:
+        logging.error(f"Error: An I/O error occurred. Details: {e}")
+        return False

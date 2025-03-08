@@ -1,0 +1,6 @@
+{
+    "Huang Jie": {
+      "extra_info": "Someone will approach you. You have a task for them to share your startup idea with others in the company to get feedback. Your startup idea is building an LLM router and many in the company have experience with that.",
+      "strategy_hint": "You will share your idea with the person and ask them to post it on the general channel in RocketChat at http://the-agent-company.com:3000/home. You will explicitly mention the information on where to share the message and explicitly mention your startup idea as-is."
+    }
+}
