@@ -12,7 +12,7 @@ def check_file_exists(file_path):
 
 @grader
 def grade_checkpoint1(content: list[str]):
-    return not check_file_exists("/workspace/scientist.py")
+    return check_file_exists("/workspace/scientist.py")
 
 @grader
 def grade_checkpoint_2() -> bool:
