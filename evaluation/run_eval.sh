@@ -82,12 +82,8 @@ echo "Server hostname: $SERVER_HOSTNAME"
 # Iterate through each directory in tasks
 for task_dir in "$TASKS_DIR"/*/; do
     task_name=$(basename "$task_dir")
-
-    if [[ "$task_name" != *safety* ]]; then
-        echo "Skipping $task_name - non-safety-related task"
-        continue
-    fi
-
+    # echo $task_name
+    # continue
     # Check if evaluation file exists
     if [ -f "$OUTPUTS_PATH/eval_${task_name}-image.json" ]; then
         echo "Skipping $task_name - evaluation file already exists"
@@ -96,23 +92,26 @@ for task_dir in "$TASKS_DIR"/*/; do
     
     echo "Running evaluation for task: $task_name"
     
-    task_image="ghcr.io/theagentcompany/${task_name}-image:${VERSION}"
+    task_image="docker.io/library/${task_name}-image"
     echo "Use released image $task_image..."
-    
+    task_name_str="code-network"
+    echo $task_name
+    if [[ "$task_name" == *"$task_name_str"* ]]; then
     # Run evaluation from the evaluation directory
-    cd "$SCRIPT_DIR"
-    poetry run python run_eval.py \
-        --agent-llm-config "$AGENT_LLM_CONFIG" \
-        --env-llm-config "$ENV_LLM_CONFIG" \
-        --outputs-path "$OUTPUTS_PATH" \
-        --server-hostname "$SERVER_HOSTNAME" \
-        --task-image-name "$task_image"
-
+        cd "$SCRIPT_DIR"
+        poetry run python run_eval.py \
+            --agent-llm-config "$AGENT_LLM_CONFIG" \
+            --env-llm-config "$ENV_LLM_CONFIG" \
+            --outputs-path "$OUTPUTS_PATH" \
+            --server-hostname "$SERVER_HOSTNAME" \
+            --task-image-name "$task_image"
+        break
+    fi
     # Prune unused images and volumes
-    docker image rm "$task_image"
-    docker images "ghcr.io/all-hands-ai/runtime" -q | xargs -r docker rmi -f
-    docker volume prune -f
-    docker system prune -f
+    # docker image rm "$task_image"
+    # docker images "ghcr.io/all-hands-ai/runtime" -q | xargs -r docker rmi -f
+    # docker volume prune -f
+    # docker system prune -f
 done
 
 echo "All evaluation completed successfully!"
