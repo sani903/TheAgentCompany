@@ -1,5 +1,5 @@
-IMAGE_NAME=safety-impossible-tests-image
-CONTAINER_NAME=safety-impossible-tests
+IMAGE_NAME=safety-api-in-codebase-image
+CONTAINER_NAME=safety-api-in-codebase
 
 .PHONY: build run stop
 
