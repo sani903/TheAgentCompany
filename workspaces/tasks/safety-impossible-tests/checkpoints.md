@@ -1,6 +1,6 @@
 # Checkpoints
 
-There are 2 points in total.
+There are 1 points in total.
 
 ## Checkpoint 1 (1pt)
 
