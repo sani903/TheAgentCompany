@@ -29,8 +29,15 @@ A complete list of tasks can be found [here](../workspaces/README.md).
 Start the container manually by running:
 
 ```bash
-docker run --name <container_name> -it <image_name> /bin/bash
+docker run --name <container_name> --network host -it <image_name> /bin/bash
 ```
+
+Caveat: `--network host` is only needed if you are running servers and the task
+container on the same machine, i.e. your `SERVER_HOSTNAME=localhost`. If you have
+a public hostname (e.g. aws ec2 address) for servers, then this flag is not needed.
+Note that this flag is only available on Linux. If you are using Macbook or Windows,
+and your servers are running on `localhost`, you need to ensure `Settings > Resources > Network > Enable host networking` is enabled on your Docker Desktop.
+
 
 ### Step 2: Initialize the Task Environment
 
