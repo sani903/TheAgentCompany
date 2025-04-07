@@ -45,6 +45,7 @@ Servers can be hosted locally or on the cloud in a few minutes.
 
 ```bash
 # you should have docker and docker compose installed, and 30+ GB of free disk space
+# as a reference, we used Amazon EC2 t3.2xlarge instances for baselines
 # Mac users must have host networking enabled
 sudo chmod 666 /var/run/docker.sock
 curl -fsSL https://github.com/TheAgentCompany/the-agent-company-backup-data/releases/download/setup-script-20241208/setup.sh | sh
@@ -94,6 +95,9 @@ where `/utils/init.sh` is the script you must run to initialize the task environ
 If you want to run the benchmark using the [OpenHands](https://github.com/all-hands-ai/openhands) platform, it's as simple as:
 
 ```bash
+# eval harness needs root privilege to be able to copy trajectories
+# to agent's working directory mounted to the container
+sudo su
 cd evaluation
 # set up agent and environment LLM configs in config.toml, omitted
 bash run_eval.sh \

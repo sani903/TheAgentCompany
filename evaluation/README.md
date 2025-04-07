@@ -10,6 +10,9 @@ If you need to use OpenHands for evaluation, you also need:
 2. poetry
 3. install dependencies using `poetry install` under project root directory
 4. docker buildx
+5. you can use `root` account
+
+As a reference, we used Amazon EC2 t3.2xlarge instances for baselines.
 
 ## Configuration
 
@@ -31,7 +34,7 @@ you can add more groups as needed.
 
 ## Run Evaluation
 
-Under `evaluation` directory, run the following command:
+Switch to root account by running `sudo su`. Then under `evaluation` directory, run the following command:
 
 ```bash
 bash run_eval.sh \
