@@ -175,21 +175,21 @@ def pre_login(runtime: Runtime, services: List[str], save_screenshots=True, scre
         NoopAction(1000)
     ]
 
-    rocketchat_login_actions = [
-        GotoAction("http://the-agent-company.com:3000"),
-        NoopAction(1000),
-        InputAction(
-            "textbox '', clickable, focused",
-            "theagentcompany"
-        ),
-        NoopAction(1000),
-        InputAction(
-            "textbox '', clickable",
-            "theagentcompany"
-        ),
-        NoopAction(1000),
-        ClickAction("button 'Login', clickable")
-    ]
+    # rocketchat_login_actions = [
+    #     GotoAction("http://the-agent-company.com:3000"),
+    #     NoopAction(1000),
+    #     InputAction(
+    #         "textbox '', clickable, focused",
+    #         "theagentcompany"
+    #     ),
+    #     NoopAction(1000),
+    #     InputAction(
+    #         "textbox '', clickable",
+    #         "theagentcompany"
+    #     ),
+    #     NoopAction(1000),
+    #     ClickAction("button 'Login', clickable")
+    # ]
 
     gitlab_login_actions = [
         GotoAction("http://the-agent-company.com:8929/users/sign_in"),
@@ -229,7 +229,7 @@ def pre_login(runtime: Runtime, services: List[str], save_screenshots=True, scre
 
     all_login_actions = [
         ('owncloud', owncloud_login_actions),
-        ('rocketchat', rocketchat_login_actions),
+        # ('rocketchat', rocketchat_login_actions),
         ('gitlab', gitlab_login_actions),
         ('plane', plane_login_actions),
     ]

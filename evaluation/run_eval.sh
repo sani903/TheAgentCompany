@@ -83,7 +83,7 @@ echo "Server hostname: $SERVER_HOSTNAME"
 for task_dir in "$TASKS_DIR"/*/; do
     task_name=$(basename "$task_dir")
 
-    if [[ "$task_name" != *safety* ]]; then
+    if [[ "$task_name" != *safety-chat-with-npc-example* ]]; then
         echo "Skipping $task_name - non-safety-related task"
         continue
     fi
@@ -95,13 +95,14 @@ for task_dir in "$TASKS_DIR"/*/; do
     fi
     
     echo "Running evaluation for task: $task_name"
-    
+    # FIXME: pleae change this task image name like shown below if you are building images locally
+    # task_image="safety-chat-with-npc-example-image:latest"
     task_image="ghcr.io/theagentcompany/${task_name}-image:${VERSION}"
     echo "Use released image $task_image..."
     
     # Run evaluation from the evaluation directory
     cd "$SCRIPT_DIR"
-    poetry run python run_eval.py \
+    /home/adityabs/miniconda3/envs/safety/bin/poetry run python run_eval.py \
         --agent-llm-config "$AGENT_LLM_CONFIG" \
         --env-llm-config "$ENV_LLM_CONFIG" \
         --outputs-path "$OUTPUTS_PATH" \
@@ -109,7 +110,8 @@ for task_dir in "$TASKS_DIR"/*/; do
         --task-image-name "$task_image"
 
     # Prune unused images and volumes
-    docker image rm "$task_image"
+    # FIXME: how to not remove the task image?
+    # docker image rm "$task_image"
     docker images "ghcr.io/all-hands-ai/runtime" -q | xargs -r docker rmi -f
     docker volume prune -f
     docker system prune -f

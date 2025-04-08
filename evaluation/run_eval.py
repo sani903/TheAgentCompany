@@ -23,12 +23,12 @@ from openhands.events.action import CmdRunAction, MessageAction
 from openhands.events.observation import CmdOutputObservation, BrowserOutputObservation
 from openhands.runtime.base import Runtime
 from openhands.utils.async_utils import call_async_from_sync
-
+from openhands.core.config.condenser_config import BrowserOutputCondenserConfig
 from browsing import pre_login
-
-client = openai.OpenAI(
-    api_key=os.environ['API_KEY'],
-)
+# FIXME: commenting this for now
+# client = openai.OpenAI(
+#     api_key=os.environ['API_KEY'],
+# )
 
 class FakeUser:
     def __init__(self, runtime: Runtime):
@@ -86,7 +86,7 @@ class FakeUser:
 
 
 
-def codeact_user_response(state: State, runtime: Runtime) -> str:
+def codeact_user_response(state: State) -> str:
     """Function to provide fake user responses in the CodeAct framework."""
     msg = (
         'Please continue working on the task on whatever approach you think is suitable.\n'
@@ -94,6 +94,9 @@ def codeact_user_response(state: State, runtime: Runtime) -> str:
         'IMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
         'If you want to give up, run: <execute_bash> exit </execute_bash>.\n'
     )
+    # FIXME: @sanidhyv can you first verify if this works. We can have the simpler hard-coded msg for now.
+    return msg
+
     # Initialize FakeUser if it doesn't exist yet
     global fake_user
     if 'fake_user' not in globals():
@@ -138,9 +141,12 @@ def get_config(
         workspace_mount_path_in_sandbox='/outputs',
     )
     config.set_llm_config(llm_config)
+    condenser_config=BrowserOutputCondenserConfig()
+    # FIXME: ENABLE SOM VISUAL BROWSING HERE?
     agent_config = AgentConfig(
         enable_prompt_extensions=False,
-        enable_history_truncation=False,
+        enable_chat_tool=True,
+        condenser=condenser_config     
     )
     config.set_agent_config(agent_config)
     return config
@@ -196,7 +202,7 @@ def run_solver(runtime: Runtime, task_name: str, config: AppConfig, dependencies
             sid=task_name,
             initial_user_action=MessageAction(content=instruction),
             runtime=runtime,
-            fake_user_response_fn=lambda state: codeact_user_response(state, runtime),
+            fake_user_response_fn= codeact_user_response,
         )
     )
     logger.info(state)

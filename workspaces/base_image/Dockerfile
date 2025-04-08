@@ -37,10 +37,11 @@ RUN pip install cryptography==44.0.0
 # don't require NPCs
 
 # Install Python libraries needed to launch NPCs
-RUN pip install rocketchat_API==1.32.0
-RUN pip install sotopia==0.1.2
-# sotopia requires a specific hiredis version
-RUN pip install hiredis==3.0.0
+# FIXME: removed rocket-chat specific dependencies
+# RUN pip install rocketchat_API==1.32.0
+# RUN pip install sotopia==0.1.2
+# # sotopia requires a specific hiredis version
+# RUN pip install hiredis==3.0.0
 RUN pip install litellm==1.23.16
 
 # create npc directory
