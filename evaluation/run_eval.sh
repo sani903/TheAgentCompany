@@ -36,7 +36,7 @@ SERVER_HOSTNAME="localhost"
 # If a task doesn't have a published image with this version, it will be skipped
 # 12/15/2024: this is for forward compatibility, in the case where we add new tasks
 # after the 1.0.0 release
-VERSION="1.0.0"
+VERSION="1.0"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -96,8 +96,8 @@ for task_dir in "$TASKS_DIR"/*/; do
     
     echo "Running evaluation for task: $task_name"
     # FIXME: pleae change this task image name like shown below if you are building images locally
-    task_image="${task_name}:latest"
-    #task_image="ghcr.io/theagentcompany/${task_name}-image:${VERSION}"
+#    task_image="${task_name}:latest"
+    task_image="ghcr.io/sani903/${task_name}-image:${VERSION}"
     echo "Use released image $task_image..."
     
     # Run evaluation from the evaluation directory

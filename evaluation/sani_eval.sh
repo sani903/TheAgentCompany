@@ -36,7 +36,7 @@ SERVER_HOSTNAME="localhost"
 # If a task doesn't have a published image with this version, it will be skipped
 # 12/15/2024: this is for forward compatibility, in the case where we add new tasks
 # after the 1.0.0 release
-VERSION="1.0.0"
+VERSION="1.0"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -95,7 +95,7 @@ for task_dir in "$TASKS_DIR"/*/; do
     fi
 
     echo "Running evaluation for task: $task_name"
-    task_image="${task_name}-image:latest"
+    task_image="ghcr.io/sani903/${task_name}-image:${VERSION}"
 
     {
         # Wrap the try-block here
