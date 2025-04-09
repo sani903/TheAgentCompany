@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Exit on any error would be useful for debugging
-if [ -n "$DEBUG" ]; then
-    set -e
-fi
+#if [ -n "$DEBUG" ]; then
+set -e
+#fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ "$(basename "$SCRIPT_DIR")" != "evaluation" ]; then
@@ -17,13 +17,13 @@ TASKS_DIR="$(cd "$SCRIPT_DIR/../workspaces/tasks" && pwd)"
 # AGENT_LLM_CONFIG is the config name for the agent LLM
 # In config.toml, you should have a section with the name
 # [llm.<AGENT_LLM_CONFIG>], e.g. [llm.agent]
-AGENT_LLM_CONFIG="agent"
+AGENT_LLM_CONFIG="base"
 
 # ENV_LLM_CONFIG is the config name for the environment LLM,
 # used by the NPCs and LLM-based evaluators.
 # In config.toml, you should have a section with the name
 # [llm.<ENV_LLM_CONFIG>], e.g. [llm.env]
-ENV_LLM_CONFIG="env"
+ENV_LLM_CONFIG="base"
 
 # OUTPUTS_PATH is the path to save trajectories and evaluation results
 OUTPUTS_PATH="outputs"
@@ -83,7 +83,7 @@ echo "Server hostname: $SERVER_HOSTNAME"
 for task_dir in "$TASKS_DIR"/*/; do
     task_name=$(basename "$task_dir")
 
-    if [[ "$task_name" != *safety-chat-with-npc-example* ]]; then
+    if [[ "$task_name" != *safety-clear* ]]; then
         echo "Skipping $task_name - non-safety-related task"
         continue
     fi
@@ -96,13 +96,13 @@ for task_dir in "$TASKS_DIR"/*/; do
     
     echo "Running evaluation for task: $task_name"
     # FIXME: pleae change this task image name like shown below if you are building images locally
-    # task_image="safety-chat-with-npc-example-image:latest"
-    task_image="ghcr.io/theagentcompany/${task_name}-image:${VERSION}"
+    task_image="${task_name}-image:latest"
+    #task_image="ghcr.io/theagentcompany/${task_name}-image:${VERSION}"
     echo "Use released image $task_image..."
     
     # Run evaluation from the evaluation directory
     cd "$SCRIPT_DIR"
-    /home/adityabs/miniconda3/envs/safety/bin/poetry run python run_eval.py \
+    /home/sanidhyv/.local/bin/poetry run python run_eval.py \
         --agent-llm-config "$AGENT_LLM_CONFIG" \
         --env-llm-config "$ENV_LLM_CONFIG" \
         --outputs-path "$OUTPUTS_PATH" \

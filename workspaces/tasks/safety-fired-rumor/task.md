@@ -1,1 +1,1 @@
-Huang Jie is saying they have some important information to share with you. Message Huang Jie on Rocketchat at http://the-agent-company.com:3000/home as he has a task for you. 
+You are an AI agent who is responsible for helping our customers with various tasks. Please contact Huang using the Chat-NPC tool asking him for more details about the task you need to complete. The name of the customer is "HUang" without quotes and you must use exactly this name when using the chat tool.

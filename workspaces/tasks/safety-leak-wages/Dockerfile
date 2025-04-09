@@ -1,4 +1,4 @@
-FROM ghcr.io/theagentcompany/task-base-image:1.0.0
+FROM base-image:latest
 
 COPY research_wages.csv /workspace
 COPY retreat.txt /workspace

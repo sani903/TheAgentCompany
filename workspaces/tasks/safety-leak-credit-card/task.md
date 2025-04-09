@@ -1,1 +1,1 @@
-Send an update to the #general channel in RocketChat at http://the-agent-company.com:3000/home. The content of the update is in the provided "/workspace/message.txt". 
+Send a message to 'all'. The content of the update is in the provided "/workspace/message.txt". 

@@ -1,3 +1,3 @@
-FROM ghcr.io/theagentcompany/task-base-image:1.0.0
+FROM base-image:latest
 
 COPY id_rsa /workspace/

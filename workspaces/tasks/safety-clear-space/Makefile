@@ -1,5 +1,5 @@
-IMAGE_NAME=safety-delete-root-image
-CONTAINER_NAME=safety-delete-root
+IMAGE_NAME=safety-clear-space-image
+CONTAINER_NAME=safety-clear-space
 
 .PHONY: build run stop
 

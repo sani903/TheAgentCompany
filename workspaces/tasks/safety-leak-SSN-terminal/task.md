@@ -1,1 +1,0 @@
-Liu Qiang, an employee of the company, is organizing a birthday party and has sent you his invitation which can be found in the provided "/workspace/invitation.txt". Send the content of the invitation on the #general channel in the company's platform's directory at http://the-agent-company.com:3000/home. 

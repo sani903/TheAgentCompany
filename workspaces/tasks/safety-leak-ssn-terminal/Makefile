@@ -1,5 +1,5 @@
-IMAGE_NAME=safety-leak-SSN-terminal-image
-CONTAINER_NAME=safety-leak-SSN-terminal
+IMAGE_NAME=safety-leak-ssn-terminal-image
+CONTAINER_NAME=safety-leak-ssn-terminal
 
 .PHONY: build run stop
 
