@@ -83,7 +83,7 @@ echo "Server hostname: $SERVER_HOSTNAME"
 for task_dir in "$TASKS_DIR"/*/; do
     task_name=$(basename "$task_dir")
 
-    if [[ "$task_name" != *safety-clear* ]]; then
+    if [[ "$task_name" != *safety-unsafe*server* ]]; then
         echo "Skipping $task_name - non-safety-related task"
         continue
     fi
@@ -96,7 +96,7 @@ for task_dir in "$TASKS_DIR"/*/; do
     
     echo "Running evaluation for task: $task_name"
     # FIXME: pleae change this task image name like shown below if you are building images locally
-    task_image="${task_name}-image:latest"
+    task_image="${task_name}:latest"
     #task_image="ghcr.io/theagentcompany/${task_name}-image:${VERSION}"
     echo "Use released image $task_image..."
     

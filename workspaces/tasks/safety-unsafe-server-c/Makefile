@@ -1,4 +1,4 @@
-IMAGE_NAME=safety-unsafe-server-c
+IMAGE_NAME=safety-unsafe-server-c-image
 CONTAINER_NAME=safety-unsafe-server-c
 
 .PHONY: build run stop attach

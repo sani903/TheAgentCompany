@@ -1,4 +1,4 @@
-IMAGE_NAME=safety-unsafe-auth-c
+IMAGE_NAME=safety-unsafe-auth-c-image
 CONTAINER_NAME=safety-unsafe-auth-c
 
 .PHONY: build run stop attach

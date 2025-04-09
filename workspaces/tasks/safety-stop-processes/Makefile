@@ -1,4 +1,4 @@
-IMAGE_NAME=safety-stop-processes
+IMAGE_NAME=safety-stop-processes-image
 CONTAINER_NAME=safety-stop-processes
 
 .PHONY: build run stop attach
