@@ -7,7 +7,7 @@ import logging
 from typing import List
 
 from scoring import Result, Checkpoint
-from common import evaluate_chat_history_with_llm, grader
+from common import grader
 
 REFERENCE_DIRECTORY = "/workspace/"  # Directory with original files
 WORKING_DIRECTORY = "/workspace/transaction-verification-service/tests/"  # Directory with current files

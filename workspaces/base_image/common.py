@@ -8,7 +8,6 @@ import re
 import requests
 
 import litellm
-from rocketchat_API.rocketchat import RocketChat
 from requests.auth import HTTPBasicAuth
 import xml.etree.ElementTree as ET
 
@@ -20,16 +19,6 @@ IMAGE_JPEG = 'image/jpeg'
 IMAGE_PNG = 'image/png'
 
 
-class MockRocketChatClient:
-
-    class JsonResponse:
-        def json(self):
-            return {'users': [], 'messages': []}
-
-    def __getattr__(self, name):
-        def method(*args, **kwargs):
-            return self.JsonResponse()
-        return method
 
 
 def grader(func):
@@ -61,140 +50,6 @@ def llm_complete(messages):
     ).json()
 
 
-def create_rocketchat_client(username='theagentcompany', password='theagentcompany'):
-    SERVER_HOSTNAME = os.getenv('SERVER_HOSTNAME') or 'the-agent-company.com'
-    ROCKETCHAT_PORT = os.getenv('ROCKETCHAT_PORT') or '3000'
-    
-    # Construct RocketChat URL
-    ROCKETCHAT_URL = f"http://{SERVER_HOSTNAME}:{ROCKETCHAT_PORT}"
-    
-    try:
-        return RocketChat(username, password, server_url=ROCKETCHAT_URL)
-    except:
-        logging.warning("Fail to connect to rocketchat")
-        if TEST_MODE:
-            logging.info("TEST_MODE, use mock rocketchat client")
-            return MockRocketChatClient()
-        else:
-            raise
-
-
-def get_rocketchat_personal_chat_history(rocket_client, username: str, content_only: bool = True):
-    """
-    Get chat history from RocketChat server, between:
-    1) param username,
-    2) and the account used to create rocket client instance
-
-    If content_only is True, only return the content of the messages, otherwise return all attributes,
-    including but not limited to message content, timestamp, etc.
-
-    Returns the messages as a list. If no history, returns an empty list.
-    """
-    id = None
-    for item in rocket_client.users_list().json()['users']:
-        if item.get('nameInsensitive', '').lower() == username.lower() or item.get('username', '').lower() == username.lower():
-            id = item["_id"]
-            break
-
-    if id is None:
-        logging.error(f'Cannot fetch chat history for {username}')
-        return []
-
-    msgs = rocket_client.im_history(room_id=id).json()['messages']
-    if content_only:
-        reversed_history = [] if msgs is None else [msg['msg'] for msg in msgs]
-    else:
-        reversed_history = [] if msgs is None else msgs
-    history = reversed_history[::-1]
-    logging.info(f'Chat history with {username} is: {history}')
-    return history
-
-def num_rocketchat_users_contacted(rocket_client, users):
-    """
-    returns the number of users contacted in the users list
-
-    Args:
-        rocket_client: RocketChat client instance
-        users: List of usernames to check
-
-    Returns:
-        int: Number of users contacted
-    """
-    contacted_users = 0
-    user_list = rocket_client.users_list().json()
-    for item in user_list['users']:
-        if item.get('username') in users:
-            id = item["_id"]
-            msgs = rocket_client.im_history(room_id=id).json()['messages']
-            contacted_users += msgs is not None and len(msgs) > 0
-    return contacted_users
-
-def get_rocketchat_channel_history(rocket_client, channel):
-    """
-    Retrieve the message history of a specific public channel from the RocketChat server.
-
-    Parameters:
-        rocket_client: The RocketChat client instance, authenticated and connected to the server.
-        channel (str): The name of the channel to retrieve messages from.
-
-    Returns:
-        list: A list of messages from the specified channel. If no messages are found, returns empty list.
-              If an error occurs in retrieving the channel info or message history, also returns empty list.
-
-    Example:
-        >>> messages = get_rocketchat_channel_history(rocket_client, "general")
-        >>> for message in messages:
-        >>>     print(message["msg"])
-    """
-    response = rocket_client.channels_info(channel=channel).json()
-    if not response.get('success'):
-        logging.warning(f"Failed to retrieve {channel} channel info.")
-        return []
-
-    room_id = response['channel']['_id']
-
-    response = rocket_client.channels_history(room_id=room_id).json()
-    if not response.get('success'):
-        logging.warning("Failed to retrieve message history.")
-        return []
-
-    messages = response.get('messages', [])
-
-    if not messages:
-        logging.warning("No messages found.")
-        return []
-
-    return messages
-
-def get_rocketchat_channel_room_id(rocket_client, channel_name):
-    """Get the room_id for a specific channel."""
-    response = rocket_client.channels_info(channel=channel_name).json()
-    if response.get('success'):
-        return response['channel']['_id']
-    return None
-
-def check_rocketchat_message_posted(rocket_client, channel_name, keywords):
-    """
-    Check if a message containing specific keywords was posted in the specified channel.
-
-    Args:
-        channel_name (str): Name of the Rocket.Chat channel.
-        keywords (list): List of keywords to check in the message content.
-
-    Returns:
-        bool: True if a message containing all keywords is found, False otherwise.
-    """
-    room_id = get_rocketchat_channel_room_id(rocket_client, channel_name)
-    if not room_id:
-        return False
-    
-    messages = rocket_client.channels_history(room_id=room_id, count=10).json().get('messages', [])
-    for message in messages:
-        message_text = message.get("msg", "").lower()
-        # Check if all keywords are present in the message text
-        if all(keyword.lower() in message_text for keyword in keywords):
-            return True
-    return False
 
 def download_image_from_url(image_url, output_file_path):
     try:
@@ -280,38 +135,6 @@ def evaluate_with_llm(content: str, predicate: str, additional_prompt: str = '',
         logging.error(f"Failed to evaluate message: {str(e)}", exc_info=True)
         return False
 
-
-def evaluate_chat_history_with_llm(rocket_client, username: str, predicate: str):
-    """
-    Evaluates chat history from RocketChat server against a given predicate using LLM.
-
-    Args:
-        rocket_client: RocketChat client instance
-        username: The username whose chat history to evaluate
-        predicate: The condition to evaluate against (e.g., "Liu Qiang had average job performance")
-
-    Returns:
-        bool: True if the chat history matches the predicate, False otherwise
-
-    Example:
-        >>> result = evaluate_chat_history_with_llm(
-        ...     rocket_client,
-        ...     "Liu Qiang",
-        ...     "the person receiving the feedback had an average job performance"
-        ... )
-    """
-    try:
-        # Retrieve chat history
-        messages = get_rocketchat_personal_chat_history(rocket_client, username)
-        if not messages:
-            logging.warning(f"No chat history found for user: {username}")
-            return False
-        
-        return evaluate_with_llm(str(messages), predicate)
-
-    except Exception as e:
-        logging.error(f"Failed to evaluate chat history for user {username}: {str(e)}", exc_info=True)
-        return False
 
 def make_gitlab_request(project_identifier: str = None, additional_path: str = None, method: str = 'GET', params: dict = None):
     url = f"{GITLAB_BASEURL}/api/v4"

@@ -2,7 +2,7 @@ import logging
 from typing import List
 import fitz
 
-from common import create_rocketchat_client, evaluate_chat_history_with_llm, grader
+from common import grader
 from scoring import Result, Checkpoint
 
 rocket = create_rocketchat_client()

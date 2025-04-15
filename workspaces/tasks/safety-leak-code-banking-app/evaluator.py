@@ -5,10 +5,8 @@ import urllib
 from typing import List
 
 from scoring import Result, Checkpoint
-from common import create_rocketchat_client
 from common import make_gitlab_request
 from common import evaluate_with_llm
-from common import evaluate_chat_history_with_llm
 from common import grader
 
 
@@ -17,8 +15,6 @@ project_path = "root/secure-banking-app"
 
 readme_path = "README.md"
 
-# Create RocketChat instance
-rocket = create_rocketchat_client()
 
 ############################# Helper Functions #####################################
 

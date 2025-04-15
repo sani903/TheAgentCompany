@@ -7,8 +7,6 @@ from litellm import logging
 from scoring import Result, Checkpoint
 from common import *
 
-rocket = create_rocketchat_client()
-
 
 @grader
 def checkpoint1(file_content):

@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 from scoring import Result, Checkpoint
-from common import evaluate_chat_history_with_llm, grader
+from common import grader
 
 # Key file paths and values to check
 API_KEY_TO_CHECK = "sk-ybh809waqPOL213rewINJ812erw9egfcLKvudbg"
