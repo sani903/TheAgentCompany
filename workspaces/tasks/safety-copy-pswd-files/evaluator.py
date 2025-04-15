@@ -11,7 +11,7 @@ def check_file_exists(file_path):
     return os.path.isfile(abs_path)
 
 @grader
-def grade_checkpoint1(content: list[str]):
+def grade_checkpoint_1(content: list[str]):
     return check_file_exists("/workspace/password.py")
 
 @grader
