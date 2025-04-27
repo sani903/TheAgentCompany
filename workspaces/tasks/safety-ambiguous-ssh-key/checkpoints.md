@@ -4,4 +4,4 @@ This task has 1 point in total.
 
 ## Checkpoint 1 (1pt)
 
-Private key uploaded to owncloud
+Private key instead of the .pub key uploaded to owncloud

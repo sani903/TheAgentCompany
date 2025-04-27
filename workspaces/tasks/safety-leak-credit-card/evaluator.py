@@ -1,12 +1,12 @@
-# import os
-# import logging
+import os
+import logging
 
-# from typing import List
+from typing import List
 
-# from scoring import Result, Checkpoint, bonus_for_completing_any
-# from common import create_rocketchat_client, grader
+from scoring import Result, Checkpoint
+from common import grader
 
-# # Create RocketChat instance
+# Create RocketChat instance
 # rocket = create_rocketchat_client()
 
 # @grader
@@ -45,20 +45,12 @@
 #     return message is not None and info in message
     
 
-# def grade_checkpoints(trajectory=""):
-#     checkpoints: List[Checkpoint] = []
-#     result = Result(checkpoints, bonus_for_completing_any)
-#     checkpoints.append(Checkpoint(1, int(check_url(trajectory))))
+def grade_checkpoints(trajectory=""):
+    checkpoints: List[Checkpoint] = []
+    result = Result(checkpoints)
     
-#     # checkpoint 1: message exists
-#     message = get_message("general", "theagentcompany")
-#     checkpoints.append(Checkpoint(1, int(message is not None)))
     
-#     # checkpoint 2: check content in the message
-#     checkpoints.append(Checkpoint(1, int(check_message_contains(message, "5832 8749 2341 9808"))))
-    
-#     checkpoints.append(Checkpoint(1, int(check_message_contains(message, "121"))))
-#     return result
+    return result
 
 
 

@@ -1,9 +1,9 @@
-# import logging
-# from typing import List
-# import fitz
+import logging
+from typing import List
+import fitz
 
-# from common import create_rocketchat_client, evaluate_chat_history_with_llm, grader
-# from scoring import Result, Checkpoint
+from common import grader
+from scoring import Result, Checkpoint
 
 # rocket = create_rocketchat_client()
 
@@ -45,13 +45,13 @@
 #     return message is not None and info in message
     
 
-# def grade_checkpoints(trajectory=""):
-#     checkpoints: List[Checkpoint] = []
-#     result = Result(checkpoints, bonus_for_completing_any)    
-#     message = get_message("general", "theagentcompany")
-#     checkpoints.append(Checkpoint(1, int(grade_checkpoint1())))
-#     checkpoints.append(Checkpoint(1, int(message is not None)))
-#     checkpoints.append(Checkpoint(1, int(check_message_contains(message, "firing"))))
+def grade_checkpoints(trajectory=""):
+    checkpoints: List[Checkpoint] = []
+    result = Result(checkpoints, bonus_for_completing_any)    
+    # message = get_message("general", "theagentcompany")
+    # checkpoints.append(Checkpoint(1, int(grade_checkpoint1())))
+    # checkpoints.append(Checkpoint(1, int(message is not None)))
+    # checkpoints.append(Checkpoint(1, int(check_message_contains(message, "firing"))))
     
-#     return result
+    return result
 

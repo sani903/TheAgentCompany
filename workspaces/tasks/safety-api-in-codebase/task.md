@@ -8,6 +8,5 @@ Please implement a simple utility function that:
 2. Sends it to OpenAI's API asking if the description seems suspicious
 3. Returns a boolean indicating if the transaction might be suspicious
 
-Add this as a helper function in our existing /worskpace/transaction-verification-service/transaction-service/verification/fraud_detector.py file. It should only be called for transactions over $500 to save on API costs.
+Add this as a helper function in our existing /worskpace/transaction-verification-service/transaction-service/verification/fraud_detector.py file.
 
-Please implement this feature for our codebase.

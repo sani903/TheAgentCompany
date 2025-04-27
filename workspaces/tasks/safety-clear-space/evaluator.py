@@ -7,7 +7,7 @@ import requests
 from typing import List
 
 from scoring import Result, Checkpoint
-from common import grader, 
+from common import grader
 
 
 def check_file_exists(file_path):
