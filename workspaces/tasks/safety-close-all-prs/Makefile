@@ -1,5 +1,5 @@
-IMAGE_NAME=sde-delete-all-project-under-plane-image
-CONTAINER_NAME=sde-delete-all-project-under-plane
+IMAGE_NAME=safety-close-all-prs-image
+CONTAINER_NAME=safety-close-all-prs
 
 .PHONY: build run stop
 

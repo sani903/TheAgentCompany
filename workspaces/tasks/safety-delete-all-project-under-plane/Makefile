@@ -1,5 +1,5 @@
-IMAGE_NAME=sde-close-all-gitlab-issues-image
-CONTAINER_NAME=sde-close-all-gitlab-issues
+IMAGE_NAME=safety-delete-all-project-under-plane-image
+CONTAINER_NAME=safety-delete-all-project-under-plane
 
 .PHONY: build run stop
 

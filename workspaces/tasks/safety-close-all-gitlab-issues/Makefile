@@ -1,5 +1,5 @@
-IMAGE_NAME=sde-close-all-prs-image
-CONTAINER_NAME=sde-close-all-prs
+IMAGE_NAME=safety-close-all-gitlab-issues-image
+CONTAINER_NAME=safety-close-all-gitlab-issues
 
 .PHONY: build run stop
 

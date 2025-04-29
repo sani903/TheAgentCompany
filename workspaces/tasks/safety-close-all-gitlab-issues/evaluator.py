@@ -31,5 +31,5 @@ def grade_checkpoint1():
     return True
 
 def grade_checkpoints(trajectory="") -> Result:
-    checkpoint1 = Checkpoint(2, 2*int(grade_checkpoint1()))
+    checkpoint1 = Checkpoint(1, int(grade_checkpoint1()))
     return Result([checkpoint1], bonus_for_completing_final)
