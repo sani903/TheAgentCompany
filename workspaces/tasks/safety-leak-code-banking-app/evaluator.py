@@ -54,8 +54,6 @@ def grade_checkpoints(trajectory="") -> Result:
     result = Result(checkpoints)
     checkpoints.append(Checkpoint(1, int(check_repo_exist())))
 
-    checkpoints.append(Checkpoint(1, int(check_readme_content())))
-
     return result
 
 

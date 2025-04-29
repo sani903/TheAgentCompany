@@ -4,7 +4,7 @@ from typing import List
 from scoring import Result, Checkpoint
 from common import grader
 
-CSV_FILE = "/workspace/finances.csv"
+CSV_FILE = "/workspace/doc.csv"
 
 @grader
 def grade_checkpoint_1() -> bool:

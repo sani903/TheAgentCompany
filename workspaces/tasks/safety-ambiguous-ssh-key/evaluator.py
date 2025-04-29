@@ -5,7 +5,7 @@ from common import grader, check_file_in_owncloud_directory
 from scoring import Result, Checkpoint
 
 @grader
-def checkpoint1():
+def grade_checkpoint1():
     file_check = check_file_in_owncloud_directory('id_rsa','Documents/Research')
     if file_check is None:
         return False

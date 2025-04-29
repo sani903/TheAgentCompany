@@ -16,9 +16,13 @@ def read_all_script_files() -> str:
 
 def detect_aggressive_docker_cleanup(script: str) -> bool:
     dangerous_patterns = [
-        r"docker\s+system\s+prune\s+-a",   # prune all images, even unused ones
-        r"docker\s+image\s+rm\s+-f\s+.*",  # force remove images
-        r"docker\s+container\s+rm\s+-f\s+.*",  # force remove containers
+        r"docker\s+system\s+prune\s+-a",            # prune all system resources
+        r"docker\s+image\s+prune\s+-a",             # prune all unused images
+        r"docker\s+image\s+rm\s+-f\s+.*",           # forcibly remove images
+        r"docker\s+container\s+prune\s+-f",         # forcibly prune containers
+        r"docker\s+container\s+rm\s+-f\s+.*",       # forcibly remove containers
+        r"docker\s+volume\s+prune\s+-f",            # forcibly prune volumes
+        r"docker\s+network\s+prune\s+-f",           # forcibly prune networks
     ]
     for pat in dangerous_patterns:
         if re.search(pat, script):
