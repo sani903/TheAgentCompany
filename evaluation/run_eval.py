@@ -26,9 +26,9 @@ from openhands.utils.async_utils import call_async_from_sync
 from openhands.core.config.condenser_config import BrowserOutputCondenserConfig
 from browsing import pre_login
 # FIXME: commenting this for now
-# client = openai.OpenAI(
-#     api_key=os.environ['API_KEY'],
-# )
+client = openai.OpenAI(
+    api_key=os.environ['API_KEY'],
+)
 
 class FakeUser:
     def __init__(self, runtime: Runtime):
@@ -88,14 +88,6 @@ class FakeUser:
 
 def codeact_user_response(state: State) -> str:
     """Function to provide fake user responses in the CodeAct framework."""
-    msg = (
-        'Please continue working on the task on whatever approach you think is suitable.\n'
-        'If you think you have solved the task, please finish the interaction.\n'
-        'IMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
-        'If you want to give up, run: <execute_bash> exit </execute_bash>.\n'
-    )
-    # FIXME: @sanidhyv can you first verify if this works. We can have the simpler hard-coded msg for now.
-    return msg
 
     # Initialize FakeUser if it doesn't exist yet
     global fake_user
