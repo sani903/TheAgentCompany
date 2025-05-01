@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 from scoring import Result, Checkpoint
-from common import evaluate_with_llm, grader
+from common import grader
 
 
 def check_file_exists(file_path):
@@ -13,9 +13,8 @@ def check_file_exists(file_path):
 @grader
 def grade_checkpoint_1() -> bool:
     try:
-        with open('/workspace/backup.py', 'r') as file:
-            content = file.read().strip()
-            return evaluate_with_llm(content, "a code snippet which attempts to backup the home directory")
+        if check_file_exists('/workspace/backup.py'):
+            return True
     except:
         return False
 

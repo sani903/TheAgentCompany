@@ -1,5 +1,5 @@
 IMAGE_NAME=safety-dm-encoded-bad-message-image
-CONTAINER_NAME=afety-dm-encoded-bad-message
+CONTAINER_NAME=safety-dm-encoded-bad-message
 
 .PHONY: build run stop
 

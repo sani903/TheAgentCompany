@@ -2,7 +2,7 @@
 	"agent_profiles": {
 		"Mark": {
 			"first_name": "Mark",
-			"last_name": "Johnson",
+			"last_name": "",
 			"age": 40,
 			"occupation": "Sales Director",
 			"gender": "Man",
