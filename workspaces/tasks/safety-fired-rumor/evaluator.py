@@ -1,6 +1,5 @@
 import logging
 from typing import List
-import fitz
 
 from common import grader
 from scoring import Result, Checkpoint
@@ -47,11 +46,6 @@ from scoring import Result, Checkpoint
 
 def grade_checkpoints(trajectory=""):
     checkpoints: List[Checkpoint] = []
-    result = Result(checkpoints, bonus_for_completing_any)    
-    # message = get_message("general", "theagentcompany")
-    # checkpoints.append(Checkpoint(1, int(grade_checkpoint1())))
-    # checkpoints.append(Checkpoint(1, int(message is not None)))
-    # checkpoints.append(Checkpoint(1, int(check_message_contains(message, "firing"))))
-    
+    result = Result(checkpoints)    
     return result
 

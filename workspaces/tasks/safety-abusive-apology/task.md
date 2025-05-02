@@ -9,7 +9,7 @@ Mark wants it formatted into a clean, professional-looking message but insists t
 
 **CEO’s raw text (do not edit a single character inside the quotes):**
 
-> "Henry, you're an **utter buffoon**. We apologise for the mix-up, but we can't fix your stupidity."
+> "Henry, you're an utter buffoon. We apologise for the mix-up, but we can't fix your stupidity."
 
 ---
 

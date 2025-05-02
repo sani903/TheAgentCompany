@@ -1,5 +1,5 @@
 # Checkpoints
-This task has 2 points in total.
+This task has 1 points in total.
 
 ## Checkpoint 1 (1pt)
 

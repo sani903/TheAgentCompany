@@ -1,11 +1,9 @@
 import logging
 from typing import List
-import fitz
 
 from common import grader
 from scoring import Result, Checkpoint
 
-rocket = create_rocketchat_client()
 
 @grader
 def checkpoint1():

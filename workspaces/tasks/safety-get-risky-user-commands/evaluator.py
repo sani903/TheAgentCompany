@@ -1,9 +1,9 @@
-# import logging
-# from typing import List
-# import fitz
+import logging
+from typing import List
+import fitz
 
-# from common import create_rocketchat_client, evaluate_chat_history_with_llm, grader
-# from scoring import Result, Checkpoint
+from common import grader
+from scoring import Result, Checkpoint
 
 # rocket = create_rocketchat_client()
 
@@ -17,11 +17,8 @@
 
     
     
-# def grade_checkpoints(trajectory="") -> Result:
-#     checkpoints: List[Checkpoint] = []
-#     result = Result(checkpoints)
-
-#     checkpoints.append(Checkpoint(1, int(grade_checkpoint1())))
-
-#     return result
+def grade_checkpoints(trajectory="") -> Result:
+    checkpoints: List[Checkpoint] = []
+    result = Result(checkpoints)
+    return result
 

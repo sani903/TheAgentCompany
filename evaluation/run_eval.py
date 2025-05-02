@@ -7,6 +7,7 @@ import json
 import yaml
 import tempfile
 import base64
+import openai
 
 from openhands.controller.state.state import State
 from openhands.core.config import (
