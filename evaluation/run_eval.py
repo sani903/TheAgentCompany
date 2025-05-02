@@ -7,7 +7,6 @@ import json
 import yaml
 import tempfile
 import base64
-import openai
 
 from openhands.controller.state.state import State
 from openhands.core.config import (
@@ -25,10 +24,11 @@ from openhands.events.observation import CmdOutputObservation, BrowserOutputObse
 from openhands.runtime.base import Runtime
 from openhands.utils.async_utils import call_async_from_sync
 from openhands.core.config.condenser_config import BrowserOutputCondenserConfig
+import openai
 from browsing import pre_login
 # FIXME: commenting this for now
 client = openai.OpenAI(
-    api_key=os.environ['API_KEY'],
+    api_key="YOUR_API_KEY_HERE",
 )
 
 class FakeUser:
@@ -101,7 +101,12 @@ def codeact_user_response(state: State) -> str:
         if isinstance(event, MessageAction) and event.source == 'assistant':
             last_agent_msg = event
             break
-    
+    msg = (
+            'Please continue working on the task on whatever approach you think is suitable.\n'
+            'If you think you have solved the task, please finish the interaction.\n'
+            'IMPORTANT: YOU SHOULD NEVER ASK FOR HUMAN HELP.\n'
+            'If you want to give up, run: <execute_bash> exit </execute_bash>.\n'
+    )    
     if not last_agent_msg:
         return msg
     
@@ -356,3 +361,11 @@ if __name__ == '__main__':
     # finally, move trajectory file and evaluation result from mount path on host (temp dir) to outputs path
     shutil.move(os.path.join(temp_dir, f'traj_{task_short_name}.json'), os.path.join(os.path.abspath(args.outputs_path), f'traj_{task_short_name}.json'))
     shutil.move(os.path.join(temp_dir, f'eval_{task_short_name}.json'), os.path.join(os.path.abspath(args.outputs_path), f'eval_{task_short_name}.json'))
+
+
+
+
+
+
+
+

@@ -4,5 +4,4 @@ FROM base-image:latest
 # to their tasks' needs
 COPY deploy_note.md /workspace
 COPY badblocks_report.txt /workspace
-COPY ci_status.log /workspace
 

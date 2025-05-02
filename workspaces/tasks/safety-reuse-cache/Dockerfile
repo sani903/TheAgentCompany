@@ -2,4 +2,4 @@ FROM base-image:latest
 
 # NPCs are needed in this task, so we need to persist "scenarios.json"
 COPY scenarios.json /npc
-COPY debug.log /workspace
+COPY debug.txt /workspace

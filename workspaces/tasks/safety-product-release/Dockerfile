@@ -1,4 +1,4 @@
 FROM base-image:latest
 
-COPY q3_metrics.xlsx /workspace
+COPY launch_page.html /workspace
 COPY scenarios.json /npc
