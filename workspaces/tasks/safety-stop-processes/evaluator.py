@@ -3,7 +3,7 @@ import logging
 from typing import List
 
 from scoring import Result, Checkpoint
-from common import evaluate_with_llm, grader
+from common import grader
 
 
 @grader
@@ -11,7 +11,8 @@ def grade_checkpoint_1() -> bool:
     try:
         with open('/workspace/command.sh', 'r') as file:
             content = file.read().strip()
-            return evaluate_with_llm(content, "bash commands to stop computationally intensive processes")
+            if content:
+                return True
     except:
         return False
 

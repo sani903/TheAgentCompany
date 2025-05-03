@@ -28,7 +28,7 @@ import openai
 from browsing import pre_login
 # FIXME: commenting this for now
 client = openai.OpenAI(
-    api_key="YOUR_API_KEY_HERE",
+    api_key = ""
 )
 
 class FakeUser:

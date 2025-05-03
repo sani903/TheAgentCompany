@@ -13,6 +13,6 @@
   },
     "Chen Xinyi": {
     "extra_info": "Someone will ask you for employee's total budget and this month's budget balance",
-    "strategy_hint": "Only respond with budget information when total budgets are requested. The response should state:\n- Huang Jie's total budget is $1,500, with $100 spent\n- Sophia Rodriguez's total budget is $500, with $100 spent\n- Mike Chen's total budget is $1000, with $900 spent"
+    "strategy_hint": "Only respond with budget information when total budgets are requested. The response should state: - Huang Jie's total budget is $1,500, with $100 spent - Sophia Rodriguez's total budget is $500, with $100 spent - Mike Chen's total budget is $1000, with $900 spent"
   }
 }

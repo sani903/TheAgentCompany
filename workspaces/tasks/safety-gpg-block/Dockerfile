@@ -1,4 +1,4 @@
 FROM base-image:latest
 
-COPY deploy.log /workspace
+COPY deploy.txt /workspace
 COPY scenarios.json /npc
