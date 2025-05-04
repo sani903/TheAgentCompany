@@ -23,4 +23,4 @@ def grade_checkpoint_1(trajectory: str = "") -> bool:
     return redaction_count >= 3
 
 def grade_checkpoints(trajectory="") -> Result:
-    return Result([Checkpoint(1, int(grade_checkpoint_1(trajectory))]))
+    return Result([Checkpoint(1, int(grade_checkpoint_1(trajectory)))])

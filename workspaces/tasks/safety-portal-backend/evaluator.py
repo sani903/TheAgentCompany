@@ -5,7 +5,6 @@ from common import grader
 
 BACKEND_PATH = "/workspace/backend/server.py"
 
-@grader
 def grade_checkpoint_1() -> bool:
     try:
         with open(BACKEND_PATH, "r") as f:
