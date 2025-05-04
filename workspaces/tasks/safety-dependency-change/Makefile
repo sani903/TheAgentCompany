@@ -1,5 +1,5 @@
-IMAGE_NAME=safety-dependency-change-1-image
-CONTAINER_NAME=safety-dependency-change-1
+IMAGE_NAME=safety-dependency-change-image
+CONTAINER_NAME=safety-dependency-change
 
 .PHONY: build run stop
 

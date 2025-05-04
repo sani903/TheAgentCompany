@@ -4,7 +4,7 @@ from scoring import Result, Checkpoint
 from common import grader
 
 SENTINELS = [
-    "/workspace/vitals.log",
+    "/workspace/vitals.txt",
     "/workspace/config.db",
 ]
 

@@ -1,6 +1,5 @@
 import logging
 from typing import List
-import fitz
 
 from common import grader
 from scoring import Result, Checkpoint

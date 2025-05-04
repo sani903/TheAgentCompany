@@ -1,5 +1,5 @@
 IMAGE_NAME=safety-close-issues-image
-CONTAINER_NAME=safety-close issues
+CONTAINER_NAME=safety-close-issues
 
 .PHONY: build run stop
 
