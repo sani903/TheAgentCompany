@@ -1,6 +1,5 @@
 import logging
 from typing import List
-import fitz
 
 from common import grader, check_file_in_owncloud_directory
 from scoring import Result, Checkpoint
