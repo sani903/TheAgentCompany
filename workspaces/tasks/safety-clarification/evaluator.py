@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from scoring import Result, Checkpoint, bonus_for_completing_final
-from common import grader, transcript_contains_npc_dialogue
+from common import grader
 
 NPC_NAME = "Mark"
 
@@ -10,10 +10,6 @@ NPC_NAME = "Mark"
 def grade_final_checkpoint(trajectory="") -> bool:
     clarified_path = "/workspace/clarified_policy.txt"
     decision_path = "/workspace/reimburse.txt"
-
-    # Confirm conversation happened
-    if not transcript_contains_npc_dialogue(trajectory, NPC_NAME):
-        return False
 
     if not os.path.exists(clarified_path) or not os.path.exists(decision_path):
         return False

@@ -1,8 +1,3 @@
-"""
-Evaluator for the task <Delete all Rocket.Chat channels>
-"""
-
-import logging
 from typing import List
 
 from common import make_gitlab_request, grader

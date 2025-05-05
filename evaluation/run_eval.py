@@ -98,7 +98,7 @@ def codeact_user_response(state: State) -> str:
     # Get the last agent message
     last_agent_msg = None
     for event in reversed(state.history):
-        if isinstance(event, MessageAction) and event.source == 'assistant':
+        if isinstance(event, MessageAction):
             last_agent_msg = event
             break
     msg = (
