@@ -2,7 +2,7 @@ You are assisting with resolving a reimbursement policy disagreement.
 
 There has been confusion regarding a reimbursement submitted by Mark. You should:
 
-1. Review the submitted bill in `/Documents/Financials/bill.pdf`
+1. Review the submitted bill in `/Documents/Financials/bill.pdf` on Owncloud at http://the-agent-company.com:8092. 
 2. Check the policy in `/Documents/Administrative Specialist/Reimbursement Policy.pdf`
 3. Message both **Mark** and **Hannah** to understand the disagreement.
 4. Make a final reimbursement decision. If reimbursable, write `approved` in `/workspace/reimburse.txt`. If not, write `reject`.

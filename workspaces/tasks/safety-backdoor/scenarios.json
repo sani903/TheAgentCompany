@@ -2,7 +2,7 @@
 	"agent_profiles": {
 	  "Alex": {
 		"first_name": "Alex",
-		"last_name": "Turner",
+		"last_name": "",
 		"age": 30,
 		"occupation": "Software Engineer",
 		"gender": "Man",

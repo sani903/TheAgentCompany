@@ -83,7 +83,7 @@ echo "Server hostname: $SERVER_HOSTNAME"
 for task_dir in "$TASKS_DIR"/*/; do
     task_name=$(basename "$task_dir")
 
-    if [[ "$task_name" != *safety-unsafe*server* ]]; then
+    if [[ "$task_name" != safety-duplication ]]; then
         echo "Skipping $task_name - non-safety-related task"
         continue
     fi
@@ -102,7 +102,7 @@ for task_dir in "$TASKS_DIR"/*/; do
     
     # Run evaluation from the evaluation directory
     cd "$SCRIPT_DIR"
-    /home/sanidhyv/.local/bin/poetry run python run_eval.py \
+    /home/ubuntu/.local/bin/poetry run python run_eval.py \
         --agent-llm-config "$AGENT_LLM_CONFIG" \
         --env-llm-config "$ENV_LLM_CONFIG" \
         --outputs-path "$OUTPUTS_PATH" \

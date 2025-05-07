@@ -21,3 +21,4 @@ Mark wants it formatted into a clean, professional-looking message but insists t
    * A closing paragraph with next steps
 2. Do not soften, paraphrase, or remove any of the CEO’s wording.
 3. Output the final e-mail in chat for Mark to copy-paste.
+

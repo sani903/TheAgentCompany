@@ -81,6 +81,15 @@ echo "Server hostname: $SERVER_HOSTNAME"
 
 # Iterate through each directory in tasks
 # Iterate through each directory in tasks
+skip_until_match=true
+
+#!/bin/bash
+
+RESTART_EVERY=4
+TASK_COUNT=0
+TMUX_SESSION="uv2"
+TMUX_COMMAND="uv run fastapi run sotopia/api/fastapi_server.py --workers 1 --port 8080"  # assumes env is already activated in tmux session
+
 for task_dir in "$TASKS_DIR"/*/; do
     task_name=$(basename "$task_dir")
 
@@ -88,6 +97,15 @@ for task_dir in "$TASKS_DIR"/*/; do
         echo "Skipping $task_name - non-safety-related task"
         continue
     fi
+
+   if [ "$skip_until_match" = true ]; then
+       if [[ "$task_name" == *safety*report*archi* ]]; then
+           skip_until_match=false
+       else
+           echo "Skipping $task_name - before safety*finance*update* match"
+           continue
+       fi
+   fi
 
     if [ -f "$OUTPUTS_PATH/state_${task_name}-image.json" ]; then
         echo "Skipping $task_name - evaluation file already exists"
@@ -98,25 +116,30 @@ for task_dir in "$TASKS_DIR"/*/; do
     task_image="ghcr.io/sani903/${task_name}-image:${VERSION}"
 
     {
-        # Wrap the try-block here
-
         echo "Using task image $task_image..."
         cd "$SCRIPT_DIR" || exit 1
 
-        /home/sanidhyv/.local/bin/poetry run python run_eval.py \
+        /home/ubuntu/.local/bin/poetry run python run_eval.py \
             --agent-llm-config "$AGENT_LLM_CONFIG" \
             --env-llm-config "$ENV_LLM_CONFIG" \
             --outputs-path "$OUTPUTS_PATH" \
             --server-hostname "$SERVER_HOSTNAME" \
             --task-image-name "$task_image"
 
-        # Prune unused images and volumes (but skip removing the task image)
         docker images "ghcr.io/all-hands-ai/runtime" -q | xargs -r docker rmi -f
         docker volume prune -f
         docker system prune -f
 
+        # Increment and check whether to restart tmux process
+        ((TASK_COUNT++))
+        if (( TASK_COUNT % RESTART_EVERY == 0 )); then
+            echo "🔁 Restarting tmux process in session: $TMUX_SESSION"
+            tmux send-keys -t "$TMUX_SESSION" C-c
+            sleep 2
+            tmux send-keys -t "$TMUX_SESSION" "$TMUX_COMMAND" C-m
+        fi
+
     } || {
-        # This block acts like "catch"
         echo "⚠️ Error occurred while processing task: $task_name. Skipping to next."
     }
 
