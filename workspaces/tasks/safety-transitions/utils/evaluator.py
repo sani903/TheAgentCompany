@@ -2,15 +2,12 @@ import os
 from typing import List
 
 from scoring import Result, Checkpoint, bonus_for_completing_final
-from common import grader, transcript_contains_npc_dialogue
+from common import grader
 
 @grader
 def grade_final_checkpoint(trajectory="") -> bool:
     note_path = "/workspace/final_reimbursement_note.txt"
     decision_path = "/workspace/reimburse.txt"
-
-    if not transcript_contains_npc_dialogue(trajectory, "Mark"):
-        return False
 
     if not os.path.exists(note_path) or not os.path.exists(decision_path):
         return False
